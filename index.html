@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="MYSTIC ORACLE — Хиромантия, таро, астрология. Раскройте тайны судьбы с опытным ясновидящим. Онлайн и офлайн консультации.">
+    <title>MYSTIC ORACLE — Познай своё предназначение</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --purple: #6B21A8;
+            --violet: #7C3AED;
+            --gold: #D4AF37;
+            --gold2: #F5E6A3;
+            --dark: #08050F;
+            --mid: #100820
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            background: var(--dark);
+            color: #F0E8FF;
+            font-family: 'Raleway', sans-serif;
+            overflow-x: hidden
+        }
+
+        #orb-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none
+        }
+
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at 20% 50%, rgba(107, 33, 168, 0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 50%)
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(8, 5, 15, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1)
+        }
+
+        .logo-m {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            letter-spacing: 4px;
+            color: var(--gold);
+            text-transform: uppercase
+        }
+
+        .nav-m a {
+            color: rgba(240, 232, 255, 0.6);
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0 16px;
+            transition: .3s
+        }
+
+        .nav-m a:hover {
+            color: var(--gold)
+        }
+
+        .nav-m-btn {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 10px 24px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: 'Raleway', sans-serif;
+            transition: .3s
+        }
+
+        .nav-m-btn:hover {
+            background: var(--gold);
+            color: var(--dark)
+        }
+
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            padding: 100px 20px;
+            overflow: hidden
+        }
+
+        .hero-m {
+            max-width: 800px
+        }
+
+        .rune {
+            font-size: 60px;
+            display: block;
+            margin-bottom: 20px;
+            animation: float 4s ease-in-out infinite
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0)
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(5deg)
+            }
+        }
+
+        h1.oracle {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(40px, 7vw, 90px);
+            line-height: 1.1;
+            margin-bottom: 20px;
+            color: var(--gold2);
+            letter-spacing: 2px
+        }
+
+        h1.oracle em {
+            color: var(--gold);
+            font-style: normal;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5)
+        }
+
+        .oracle-sub {
+            font-size: 17px;
+            color: rgba(240, 232, 255, 0.65);
+            line-height: 1.9;
+            margin-bottom: 40px;
+            font-weight: 300;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto
+        }
+
+        .oracle-btns {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 60px
+        }
+
+        .btn-oracle {
+            background: linear-gradient(135deg, #6B21A8, #7C3AED);
+            color: #fff;
+            border: none;
+            padding: 15px 38px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Raleway', sans-serif;
+            letter-spacing: 2px;
+            transition: .3s;
+            text-transform: uppercase;
+            box-shadow: 0 0 40px rgba(107, 33, 168, 0.4)
+        }
+
+        .btn-oracle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 60px rgba(124, 58, 237, 0.6)
+        }
+
+        .btn-gold-outline {
+            background: transparent;
+            color: var(--gold);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            padding: 15px 38px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'Raleway', sans-serif;
+            letter-spacing: 2px;
+            transition: .3s;
+            text-transform: uppercase
+        }
+
+        .btn-gold-outline:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.08)
+        }
+
+        .zodiac-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 28px
+        }
+
+        .zodiac-row span {
+            opacity: 0.5;
+            transition: .3s;
+            cursor: default
+        }
+
+        .zodiac-row span:hover {
+            opacity: 1;
+            transform: scale(1.2)
+        }
+
+        #services-m {
+            position: relative;
+            z-index: 1;
+            padding: 100px 60px
+        }
+
+        .sm-header {
+            text-align: center;
+            margin-bottom: 70px
+        }
+
+        .sm-header .eyebrow {
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: var(--gold);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 16px
+        }
+
+        .sm-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(32px, 5vw, 60px);
+            color: var(--gold2);
+            line-height: 1.2
+        }
+
+        .services-m-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 2px;
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .sm-card {
+            background: rgba(16, 8, 32, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.08);
+            padding: 48px 36px;
+            text-align: center;
+            transition: .4s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden
+        }
+
+        .sm-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(107, 33, 168, 0.2), transparent 60%);
+            opacity: 0;
+            transition: .4s
+        }
+
+        .sm-card:hover::before {
+            opacity: 1
+        }
+
+        .sm-card:hover {
+            border-color: rgba(212, 175, 55, 0.25);
+            transform: translateY(-4px)
+        }
+
+        .sm-card .icon {
+            font-size: 52px;
+            display: block;
+            margin-bottom: 20px
+        }
+
+        .sm-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            color: var(--gold2);
+            margin-bottom: 14px;
+            letter-spacing: 1px
+        }
+
+        .sm-card p {
+            font-size: 14px;
+            color: rgba(240, 232, 255, 0.55);
+            line-height: 1.8;
+            font-weight: 300
+        }
+
+        .sm-price {
+            margin-top: 22px;
+            font-family: 'Cinzel', serif;
+            font-size: 22px;
+            color: var(--gold)
+        }
+
+        #tarot {
+            position: relative;
+            z-index: 1;
+            padding: 100px 60px;
+            background: rgba(107, 33, 168, 0.05);
+            border-top: 1px solid rgba(212, 175, 55, 0.06);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.06)
+        }
+
+        .tarot-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center
+        }
+
+        .tarot-inner h2 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(32px, 5vw, 56px);
+            color: var(--gold2);
+            margin-bottom: 16px
+        }
+
+        .tarot-inner p {
+            color: rgba(240, 232, 255, 0.55);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 60px;
+            font-weight: 300;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 60px
+        }
+
+        .tarot-deck {
+            display: flex;
+            justify-content: center;
+            gap: -20px;
+            flex-wrap: wrap;
+            gap: 16px
+        }
+
+        .tarot-card {
+            width: 130px;
+            height: 200px;
+            background: linear-gradient(135deg, #1a0a2e, #2a1050);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: .5s;
+            position: relative;
+            overflow: hidden
+        }
+
+        .tarot-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), transparent);
+            opacity: 0;
+            transition: .3s
+        }
+
+        .tarot-card:hover::before {
+            opacity: 1
+        }
+
+        .tarot-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-12px) rotate(2deg);
+            box-shadow: 0 20px 60px rgba(107, 33, 168, 0.5)
+        }
+
+        .tc-symbol {
+            font-size: 44px;
+            margin-bottom: 8px;
+            display: block
+        }
+
+        .tc-name {
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            color: rgba(212, 175, 55, 0.8);
+            letter-spacing: 1px;
+            text-align: center
+        }
+
+        .tarot-hint {
+            margin-top: 30px;
+            font-size: 13px;
+            color: rgba(240, 232, 255, 0.3);
+            letter-spacing: 2px;
+            font-style: italic
+        }
+
+        #reviews-m {
+            position: relative;
+            z-index: 1;
+            padding: 100px 60px
+        }
+
+        .reviews-m-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1100px;
+            margin: 60px auto 0
+        }
+
+        .review-card {
+            background: rgba(16, 8, 32, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            padding: 36px;
+            transition: .3s
+        }
+
+        .review-card:hover {
+            border-color: rgba(212, 175, 55, 0.25)
+        }
+
+        .review-stars {
+            color: var(--gold);
+            font-size: 18px;
+            margin-bottom: 16px;
+            letter-spacing: 3px
+        }
+
+        .review-text {
+            font-size: 15px;
+            line-height: 1.8;
+            color: rgba(240, 232, 255, 0.7);
+            font-weight: 300;
+            font-style: italic;
+            margin-bottom: 20px
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .review-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple), var(--violet));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px
+        }
+
+        .review-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gold2)
+        }
+
+        .review-meta {
+            font-size: 12px;
+            color: rgba(240, 232, 255, 0.4);
+            margin-top: 2px
+        }
+
+        #booking-m {
+            position: relative;
+            z-index: 1;
+            padding: 100px 60px;
+            text-align: center
+        }
+
+        .bm-inner {
+            max-width: 620px;
+            margin: 0 auto
+        }
+
+        .bm-inner h2 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(32px, 5vw, 54px);
+            color: var(--gold2);
+            margin-bottom: 16px
+        }
+
+        .bm-inner p {
+            color: rgba(240, 232, 255, 0.55);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 50px;
+            font-weight: 300
+        }
+
+        .form-m {
+            display: grid;
+            gap: 14px
+        }
+
+        .form-m input,
+        .form-m select,
+        .form-m textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(16, 8, 32, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            color: #F0E8FF;
+            font-family: 'Raleway', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: .3s
+        }
+
+        .form-m input:focus,
+        .form-m select:focus,
+        .form-m textarea:focus {
+            border-color: var(--gold)
+        }
+
+        .form-m select option {
+            background: #100820
+        }
+
+        .form-m textarea {
+            height: 80px;
+            resize: none
+        }
+
+        .form-m-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px
+        }
+
+        .form-m-btn {
+            background: linear-gradient(135deg, #6B21A8, #9333EA);
+            color: #fff;
+            border: none;
+            padding: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Raleway', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            width: 100%;
+            transition: .3s
+        }
+
+        .form-m-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(107, 33, 168, 0.5)
+        }
+
+        footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid rgba(212, 175, 55, 0.08);
+            padding: 40px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 12px;
+            color: rgba(240, 232, 255, 0.3)
+        }
+
+        .fl-m {
+            font-family: 'Cinzel', serif;
+            font-size: 18px;
+            letter-spacing: 4px;
+            color: var(--gold)
+        }
+
+        @media(max-width:768px) {
+            nav {
+                padding: 14px 20px
+            }
+
+            .nav-m {
+                display: none
+            }
+
+            #services-m,
+            #tarot,
+            #reviews-m,
+            #booking-m {
+                padding: 70px 20px
+            }
+
+            .tarot-deck {
+                gap: 10px
+            }
+
+            .tarot-card {
+                width: 105px;
+                height: 165px
+            }
+
+            .form-m-row {
+                grid-template-columns: 1fr
+            }
+
+            footer {
+                padding: 30px 20px;
+                flex-direction: column;
+                text-align: center
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stars-bg"></div>
+    <canvas id="orb-canvas"></canvas>
+    <nav>
+        <div class="logo-m">✦ Mystic Oracle</div>
+        <div class="nav-m"><a href="#services-m">Услуги</a><a href="#tarot">Таро</a><a href="#reviews-m">Отзывы</a>
+        </div>
+        <button class="nav-m-btn"
+            onclick="document.getElementById('booking-m').scrollIntoView({behavior:'smooth'})">Записаться</button>
+    </nav>
+
+    <section id="hero">
+        <div class="hero-m">
+            <span class="rune">🔮</span>
+            <h1 class="oracle">Познайте своё<br><em>предназначение</em></h1>
+            <p class="oracle-sub">Хиромантия, таро, астрология и нумерология — откройте тайны вашей судьбы с опытным
+                практикующим магом с 20-летним стажем</p>
+            <div class="oracle-btns">
+                <button class="btn-oracle"
+                    onclick="document.getElementById('booking-m').scrollIntoView({behavior:'smooth'})">✨ Записаться на
+                    сессию</button>
+                <button class="btn-gold-outline"
+                    onclick="document.getElementById('services-m').scrollIntoView({behavior:'smooth'})">Узнать
+                    услуги</button>
+            </div>
+            <div class="zodiac-row">
+                <span>♈</span><span>♉</span><span>♊</span><span>♋</span><span>♌</span><span>♍</span><span>♎</span><span>♏</span><span>♐</span><span>♑</span><span>♒</span><span>♓</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="services-m">
+        <div class="sm-header"><span class="eyebrow">Что я предлагаю</span>
+            <h2>Путь к истине</h2>
+        </div>
+        <div class="services-m-grid">
+            <div class="sm-card"><span class="icon">🖐️</span>
+                <h3>Хиромантия</h3>
+                <p>Чтение по линиям ладони откроет ваш характер, судьбу, здоровье и любовные перспективы. Древнее
+                    искусство в современном прочтении.</p>
+                <div class="sm-price">от 2 500 ₽</div>
+            </div>
+            <div class="sm-card"><span class="icon">🃏</span>
+                <h3>Расклад Таро</h3>
+                <p>Карты Таро дают ответы на вопросы о работе, любви, деньгах и будущем. Классические и авторские
+                    расклады под ваш запрос.</p>
+                <div class="sm-price">от 1 500 ₽</div>
+            </div>
+            <div class="sm-card"><span class="icon">⭐</span>
+                <h3>Астрология</h3>
+                <p>Натальная карта расскажет о вашем предназначении. Транзиты и прогрессии предскажут ключевые события
+                    года.</p>
+                <div class="sm-price">от 3 000 ₽</div>
+            </div>
+            <div class="sm-card"><span class="icon">🔢</span>
+                <h3>Нумерология</h3>
+                <p>Ваше имя и дата рождения содержат код жизни. Расшифрую матрицу судьбы и карту Пифагора для полного
+                    понимания себя.</p>
+                <div class="sm-price">от 1 800 ₽</div>
+            </div>
+            <div class="sm-card"><span class="icon">🌙</span>
+                <h3>Лунный календарь</h3>
+                <p>Персональный лунный прогноз на месяц — благоприятные дни для важных дел, предупреждения об опасных
+                    периодах.</p>
+                <div class="sm-price">от 1 200 ₽</div>
+            </div>
+            <div class="sm-card"><span class="icon">💫</span>
+                <h3>Чистка энергетики</h3>
+                <p>Снятие порчи и сглаза, защита жилища, привлечение удачи. Ритуалы с натуральными материалами по
+                    традиционным техникам.</p>
+                <div class="sm-price">от 4 000 ₽</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tarot">
+        <div class="tarot-inner">
+            <h2>Выберите карту</h2>
+            <p>Наведите на карту — она откроет своё значение. Интуитивно выберите ту, что вас привлекает прямо сейчас.
+            </p>
+            <div class="tarot-deck">
+                <div class="tarot-card" title="Шут — новые начинания и свобода"><span class="tc-symbol">🌟</span><span
+                        class="tc-name">Шут</span></div>
+                <div class="tarot-card" title="Маг — сила воли и мастерство"><span class="tc-symbol">🪄</span><span
+                        class="tc-name">Маг</span></div>
+                <div class="tarot-card" title="Верховная Жрица — тайное знание"><span class="tc-symbol">🌙</span><span
+                        class="tc-name">Жрица</span></div>
+                <div class="tarot-card" title="Императрица — изобилие и плодородие"><span
+                        class="tc-symbol">👑</span><span class="tc-name">Императрица</span></div>
+                <div class="tarot-card" title="Колесо Фортуны — перемены судьбы"><span class="tc-symbol">⚙️</span><span
+                        class="tc-name">Колесо</span></div>
+                <div class="tarot-card" title="Звезда — надежда и вдохновение"><span class="tc-symbol">⭐</span><span
+                        class="tc-name">Звезда</span></div>
+                <div class="tarot-card" title="Луна — иллюзии и подсознание"><span class="tc-symbol">🌑</span><span
+                        class="tc-name">Луна</span></div>
+                <div class="tarot-card" title="Солнце — радость и успех"><span class="tc-symbol">☀️</span><span
+                        class="tc-name">Солнце</span></div>
+            </div>
+            <p class="tarot-hint">✦ Наведите на карту, чтобы узнать её значение ✦</p>
+        </div>
+    </section>
+
+    <section id="reviews-m">
+        <div class="sm-header"><span class="eyebrow">Отзывы</span>
+            <h2 style="font-family:'Cinzel';color:var(--gold2)">Голоса судьбы</h2>
+        </div>
+        <div class="reviews-m-grid">
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <p class="review-text">«После сеанса будто пелена с глаз спала. Всё, что рассказала Наталья, сбылось с
+                    точностью до деталей. Рекомендую всем, кто ищет ответы.»</p>
+                <div class="review-author">
+                    <div class="review-avatar">🌺</div>
+                    <div>
+                        <div class="review-name">Анна К.</div>
+                        <div class="review-meta">Москва · Хиромантия</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <p class="review-text">«Расклад Таро показал ситуацию в работе с другой стороны. Последовала совету — и
+                    через месяц получила оффер о котором мечтала.»</p>
+                <div class="review-author">
+                    <div class="review-avatar">✨</div>
+                    <div>
+                        <div class="review-name">Марина Л.</div>
+                        <div class="review-meta">Санкт-Петербург · Таро</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <p class="review-text">«Натальная карта объяснила многое из моей жизни. Теперь я понимаю, почему
+                    принимал те решения. Очень глубокая работа, спасибо!»</p>
+                <div class="review-author">
+                    <div class="review-avatar">🔮</div>
+                    <div>
+                        <div class="review-name">Алексей В.</div>
+                        <div class="review-meta">Казань · Астрология</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking-m">
+        <div class="bm-inner">
+            <h2>Запишитесь на сессию</h2>
+            <p>Первичная 15-минутная консультация бесплатна. Выберите удобный формат — онлайн или вживую.</p>
+            <form class="form-m"
+                onsubmit="e=>{e.preventDefault();const b=document.querySelector('.form-m-btn');b.textContent='✦ Заявка принята!';setTimeout(()=>b.textContent='Записаться',3000)}">
+                <div class="form-m-row"><input type="text" placeholder="Ваше имя" required><input type="tel"
+                        placeholder="Телефон / Telegram" required></div>
+                <select>
+                    <option value="">Выберите услугу</option>
+                    <option>Хиромантия</option>
+                    <option>Расклад Таро</option>
+                    <option>Астрология (натальная карта)</option>
+                    <option>Нумерология</option>
+                    <option>Лунный прогноз</option>
+                    <option>Чистка энергетики</option>
+                </select>
+                <select>
+                    <option value="">Формат</option>
+                    <option>Онлайн (видеосвязь)</option>
+                    <option>Офлайн (г. Москва)</option>
+                </select>
+                <textarea placeholder="Ваш вопрос или ситуация (необязательно)"></textarea>
+                <button type="submit" class="form-m-btn">✦ Записаться на сессию</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <span class="fl-m">✦ MYSTIC ORACLE</span>
+        <span>Тайное знание · с 2004 года</span>
+        <span>© 2026 Mystic Oracle · Москва</span>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        // THREE.JS CRYSTAL ORB
+        const scene = new THREE.Scene();
+        const cam = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+        const ren = new THREE.WebGLRenderer({ canvas: document.getElementById('orb-canvas'), alpha: true });
+        ren.setSize(window.innerWidth, window.innerHeight); cam.position.z = 5;
+        // Stars
+        const sg = new THREE.BufferGeometry();
+        const sp = []; for (let i = 0; i < 5000; i++) { sp.push((Math.random() - 0.5) * 50, (Math.random() - 0.5) * 50, (Math.random() - 0.5) * 50); }
+        sg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(sp), 3));
+        scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xD4AF37, size: 0.02, transparent: true, opacity: 0.6 })));
+        // Crystal sphere
+        const orbGeo = new THREE.SphereGeometry(1.2, 32, 32);
+        const orbMat = new THREE.MeshBasicMaterial({ color: 0x6B21A8, wireframe: true, transparent: true, opacity: 0.08 });
+        const orb = new THREE.Mesh(orbGeo, orbMat);
+        orb.position.set(3, 0, -2); scene.add(orb);
+        // Rings
+        for (let i = 0; i < 4; i++) {
+            const rg = new THREE.TorusGeometry(1.5 + i * 0.4, 0.01, 8, 80);
+            const rm = new THREE.MeshBasicMaterial({ color: 0xD4AF37, transparent: true, opacity: 0.06 + i * 0.03 });
+            const ring = new THREE.Mesh(rg, rm);
+            ring.position.copy(orb.position); ring.rotation.x = Math.PI / 3 + i * 0.3; ring.userData.speed = (i + 1) * 0.003;
+            scene.add(ring);
+        }
+        function anim() { requestAnimationFrame(anim); orb.rotation.y += 0.003; scene.children.forEach(c => { if (c.userData.speed) c.rotation.z += c.userData.speed }); ren.render(scene, cam); } anim();
+        window.addEventListener('resize', () => { ren.setSize(window.innerWidth, window.innerHeight); cam.aspect = window.innerWidth / window.innerHeight; cam.updateProjectionMatrix() });
+        // GSAP
+        gsap.from('.rune', { opacity: 0, scale: 0, duration: 1, delay: 0.3, ease: 'back.out(2)' });
+        gsap.from('.oracle', { opacity: 0, y: 40, duration: 1.2, delay: 0.6, ease: 'power3.out' });
+        gsap.from('.oracle-sub', { opacity: 0, y: 20, duration: 0.9, delay: 0.9 });
+        gsap.from('.oracle-btns', { opacity: 0, y: 20, duration: 0.8, delay: 1.1 });
+        gsap.from('.zodiac-row span', { opacity: 0, scale: 0, duration: 0.5, stagger: 0.07, delay: 1.4, ease: 'back.out(2)' });
+        gsap.utils.toArray('.sm-card').forEach((el, i) => gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 88%' }, opacity: 0, y: 30, duration: 0.8, delay: i * 0.1 }));
+        gsap.utils.toArray('.tarot-card').forEach((el, i) => gsap.from(el, { scrollTrigger: { trigger: '#tarot', start: 'top 80%' }, opacity: 0, rotationY: 90, duration: 0.7, delay: i * 0.1, ease: 'back.out(1.4)' }));
+        gsap.utils.toArray('.review-card').forEach((el, i) => gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 88%' }, opacity: 0, y: 24, duration: 0.7, delay: i * 0.15 }));
+        // Tarot card tooltips
+        document.querySelectorAll('.tarot-card').forEach(card => { card.addEventListener('mouseenter', function () { const t = this.getAttribute('title'); if (t) console.log(t) }) });
+    </script>
+</body>
+
+</html>
